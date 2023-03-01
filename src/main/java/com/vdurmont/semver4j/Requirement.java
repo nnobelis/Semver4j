@@ -22,6 +22,26 @@ import java.util.regex.Pattern;
  * - NPM: follows the rules of NPM
  */
 public class Requirement {
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+
+        if (visible) {
+            // whenever the page becomes visible, set the initial preview labels to the values of
+            // the wizard model
+            updatePreviewLabels(getConfiguration());
+
+            // schedule the loading of the project preview asynchronously, otherwise the UI will not
+            // update until the job has finished
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    scheduleProjectPreviewJob();
+                }
+            });
+        }
+    }
+
     private static final Pattern IVY_DYNAMIC_PATCH_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.\\+");
     private static final Pattern IVY_DYNAMIC_MINOR_PATTERN = Pattern.compile("(\\d+)\\.\\+");
     private static final Pattern IVY_LATEST_PATTERN = Pattern.compile("latest\\.\\w+");
